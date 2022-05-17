@@ -1,21 +1,35 @@
+var fightOrSkip = function() {
+    // Ask player if they want to skip or fight a battle
+    var promptFight = window.prompt("Would you like to FIGHT or SKIP this battle? Enter 'FIGHT' or 'SKIP' to choose.");
+    // Conditional Recursive Function Call
+    if(promptFight === "" || promptFight === null) {
+        window.alert("You need to provide a valid answer! Please try again.");
+        return fightOrSkip();
+    }
+    promptFight = promptFight.toLowerCase();
+    if (promptFight === "skip") {
+        // Confrim player wants to skip
+        var confrimSkip = window.confirm("Are you sure you'd like to quit?");
+        // If yes (true), leave fight
+        if (confrimSkip) {
+            window.alert(playerInfo.name + " has decided to skip this fight. Goodbye!");
+            //subtract money from player Money for skipping
+            playerInfo.money = Math.max(0, playerInfo.money - 10);
+            console.log("playerMoney", playerInfo.money);
+            return true;
+        }    
+    } 
+    return false;
+}
+
 var fight = function (enemy) {
     //debugger;
     // Repeat and execute as long as the enemy-robot is alive
     while (playerInfo.health > 0 && enemy.health > 0) {
-        // Ask player if they want to skip or fight a battle
-        var promptFight = window.prompt("Would you like to FIGHT or SKIP this battle? Enter 'FIGHT' or 'SKIP' to choose.");
-        if (promptFight === "skip" || promptFight === "SKIP") {
-            // Confrim player wants to skip
-            var confrimSkip = window.confirm("Are you sure you'd like to quit?");
-            // If yes (true), leave fight
-            if (confrimSkip) {
-                window.alert(playerInfo.name + " has decided to skip this fight. Goodbye!");
-                //subtract money from player Money for skipping
-                playerInfo.money = Math.max(0, playerInfo.money - 10);
-                console.log("playerMoney", playerInfo.money);
-                break;
-            }
-        }
+        if (fightOrSkip()) {
+        // If true, leave fight by breaking loop
+        break; 
+    }
         // Generate random damage value based on player's attack power
         var damage = randomNumber(playerInfo.attack - 3, playerInfo.attack);
         enemy.health = Math.max(0, enemy.health - damage);
