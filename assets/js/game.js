@@ -24,13 +24,20 @@ var fightOrSkip = function() {
 }
 
 var fight = function (enemy) {
-    //debugger;
+    // Keep track of who goes first
+    var isPlayerTurn = true;
+    // Randomly change turn order
+    if(Math.random() > 0.5) {
+        isPlayerTurn = false;
+    }
     // Repeat and execute as long as the enemy-robot is alive
     while (playerInfo.health > 0 && enemy.health > 0) {
-        if (fightOrSkip()) {
-        // If true, leave fight by breaking loop
-        break; 
-    }
+        if (isPlayerTurn) {
+            // Ask player if they'd like to fight or skip using fightOrSkup function
+            if(fightOrSkip()) {
+                // If ture, leave fight by breaking loop
+                break;
+            }   
         // Generate random damage value based on player's attack power
         var damage = randomNumber(playerInfo.attack - 3, playerInfo.attack);
         enemy.health = Math.max(0, enemy.health - damage);
@@ -61,8 +68,10 @@ var fight = function (enemy) {
         } else {
             window.alert(playerInfo.name + " still has " + playerInfo.health + " health left.");
         }
-    } // End of while loop
-}; // End of fight function
+      }
+      isPlayerTurn = !isPlayerTurn;
+    }// End of while loop  
+};// End of fight function
 
 var startGame = function() {
     // Reset player stats
@@ -102,11 +111,25 @@ var startGame = function() {
 
 var endGame = function() {
     window.alert("The game has now ended. Let's see how you did!");
-    // If player is still alive, player wins!
-    if(playerInfo.health > 0) {
-    window.alert("Great job, you've survived the game! You now have a score of " + playerInfo.money + ".");
-    } else {
-        window.alert("You've lost your robot in battle.");
+        // If player is still alive, player wins!
+        if(playerInfo.health > 0) {
+            window.alert("Great job, you've survived the game! You now have a score of " + playerInfo.money + ".");
+            } else {
+                window.alert("You've lost your robot in battle.");
+            }
+    // Check localStorage for high score, if it's not there, use 0
+    var highScore = localStorage.getItem("highscore");
+    if(highScore === null) {
+        highScore = 0;
+    }
+    // If player has more money than the high score, player has new high score!
+    if (playerInfo.money > highScore) {
+        localStorage.setItem("highscore", playerInfo.money);
+        localStorage.setItem("name", playerInfo.name);
+        window.alert(playerInfo.name + " now has the high score of " + playerInfo.money + "!");
+    }
+    else {
+        window.alert(playerInfo.name + " did not beat the high score of " + highScore + ". Maybe next time!");
     }
     var playAgainConfirm = window.confirm("Would you like to play again?");
     if(playAgainConfirm) {
